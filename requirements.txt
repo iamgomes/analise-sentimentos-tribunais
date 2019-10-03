@@ -1,0 +1,5 @@
+tweepy==3.8.0
+python-decouple==3.1
+watson-developer-cloud==2.10.1
+ibm-watson==3.4.1
+Unidecode==1.1.1
