@@ -1,4 +1,4 @@
-from robots.twitter import robotTwitter
+import robots.twitter as robot
 
 
 def main():
@@ -6,12 +6,16 @@ def main():
     content = {}
 
     content['searchTerm'] = askAndReturnSearchTerm()
-    content['tweetContentOriginal'] = robotTwitter(content['searchTerm'])
+    robot.downloadTweets(content['searchTerm'])
+    #content['tweetContentOriginal'] = robot.robotTwitter(content['searchTerm'])
 
     print(content)
 
 def askAndReturnSearchTerm():
-    return input('Digite o termo a ser coletado no Twitter: ')
+    """
+    inserir termo para busca inclusive com operadores avançados de pesquisa do twitter (OR, AND, -, #, FROM, TO, @, SINCE, UNTIL)
+    """
+    return input('Digite o termo a ser pesquisado no Twitter: ') 
 
 
 if __name__ == "__main__":
