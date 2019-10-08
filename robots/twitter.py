@@ -2,9 +2,8 @@ import json
 import sys
 import re
 import tweepy
-import asyncio
 from decouple import config
-import jsonpickle
+
 
 def robotTwitter(content):
     return downloadTweets(content)
@@ -25,7 +24,7 @@ def downloadTweets(content):
 
     searchQuery = content  # é isso que estamos procurando
     maxTweets = 1 # Algum número grande e arbitrário
-    tweetsPerQry = 1  # este é o máximo que a API permite
+    tweetsPerQry = 1  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -60,6 +59,7 @@ def downloadTweets(content):
             if not new_tweets:
                 print('Não foram encontrados mais tweets')
                 break
+
             for tweet in new_tweets:
 
                 data = {
@@ -85,7 +85,7 @@ def downloadTweets(content):
 
     print('Baixados {} tweets!'.format(tweetCount))
 
-    return tweets_list[0]
+    return tweets_list
 
 """
     for page in tweepy.Cursor(api.search, q=content, lang='pt', Tweet_mode='extended', result_type ='recent', count=100).pages(5):
