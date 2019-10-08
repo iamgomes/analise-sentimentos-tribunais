@@ -3,11 +3,6 @@ import sys
 import re
 import tweepy
 from decouple import config
-
-
-def robotTwitter(content):
-    return downloadTweets(content)
-    #return contentFromTwitter(content)
     
 
 def downloadTweets(content):
@@ -66,6 +61,7 @@ def downloadTweets(content):
                     'user_id': tweet.user.id,
                     'user': tweet.user.screen_name,
                     'text': tweet.text,
+                    'text_sanitized': clean_tweet(tweet.text),
                     'location': tweet.user.location,
                     'place': tweet.place,
                     'followers_count': tweet.user.followers_count,
@@ -87,39 +83,19 @@ def downloadTweets(content):
 
     return tweets_list
 
-"""
-    for page in tweepy.Cursor(api.search, q=content, lang='pt', Tweet_mode='extended', result_type ='recent', count=100).pages(5):
-
-        print('Buscando tweets com o termo {}...'.format(content.upper()))
-        
-        data = {
-            'text': page[0]._json['text'],
-            'user': page[0]._json['user']['screen_name'],
-            'location': page[0]._json['user']['location'],
-            'place': page[0]._json['place'],
-            'followers_count': page[0]._json['user']['followers_count'],
-            'verified': page[0]._json['user']['verified'],
-            'created_at': page[0]._json['created_at']
-        }
-
-        tweets.append(data)
-    
-    search = api.search(q=content, lang='pt', count=100)
-
-    for t in search:
-        data = {
-            'text': t.text,
-            'user': t.user.screen_name,
-            'location': t.user.location,
-            'place': t.place,
-            'followers_count': t.user.followers_count,
-            'verified': t.user.verified,
-            'created_at': t.created_at
-        }
-
-        tweets.append(data)
-"""
 
 def clean_tweet(tweet):
     
-    return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t \n])|      (\w+:\/\/\S+)", " ", tweet).split())
+    return removeBlankLine(removeArrobaERT(removeLink(tweet)))
+
+def removeBlankLine(text):
+    allLines = text.split('\n')
+    withoutBlankLine = list(filter(lambda line: len(line.strip()) != 0, allLines))
+
+    return ' '.join(withoutBlankLine)
+
+def removeArrobaERT(text):
+    return text.replace('@','').replace('RT','').strip()
+
+def removeLink(text):
+    return re.sub(r'http\S+', '', text).strip()
