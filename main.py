@@ -1,5 +1,5 @@
 import robots.twitter as robot
-
+from robots.watson import sentimentWatson
 
 def main():
     # cria dicionário de dados e sua estrutura
@@ -8,8 +8,10 @@ def main():
     content['searchTerm'] = askAndReturnSearchTerm()
     robot.downloadTweets(content['searchTerm'])
     content['tweetContentOriginal'] = robot.robotTwitter(content['searchTerm'])
+    content['sentiment'] = sentimentWatson(content['tweetContentOriginal'][0]['text'])
 
     print(content)
+
 
 def askAndReturnSearchTerm():
     """
