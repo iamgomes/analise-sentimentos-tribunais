@@ -7,7 +7,7 @@ def main():
 
     content['searchTerm'] = askAndReturnSearchTerm()
     robot.downloadTweets(content['searchTerm'])
-    #content['tweetContentOriginal'] = robot.robotTwitter(content['searchTerm'])
+    content['tweetContentOriginal'] = robot.robotTwitter(content['searchTerm'])
 
     print(content)
 
