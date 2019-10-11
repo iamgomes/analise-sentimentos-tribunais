@@ -1,2 +1,2 @@
-# analise-sentimentos-tribunais
-Este projeto visa fazer uma análise de sentimentos baseado nos tweets feitos relacionados aos Tribunais do Brasil.
+# Análise de Sentimentos no Twitter sobre os Tribunais do Brasil
+Este projeto visa fazer uma análise de sentimentos utilizando os tweets que contenham a palavra "Tribunais".
