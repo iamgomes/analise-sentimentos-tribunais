@@ -18,8 +18,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 20 # Algum número grande e arbitrário
-    tweetsPerQry = 20  # este é o máximo que a API permite 100
+    maxTweets = 5 # Algum número grande e arbitrário
+    tweetsPerQry = 5  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -57,6 +57,16 @@ def downloadTweets(content):
 
             for tweet in new_tweets:
 
+                tweet_lat = 0.0
+                tweet_lon = 0.0
+
+                if tweet._json['coordinates']:    
+                    geo = tweet['coordinates']
+                    if not geo is None:
+                        latlon = geo['coordinates']
+                        tweet_lon = latlon[0]
+                        tweet_lat = latlon[1]
+
                 data = {
                     'user_id': tweet.user.id,
                     'user': tweet.user.screen_name,
@@ -64,7 +74,8 @@ def downloadTweets(content):
                     'text_sanitized': clean_tweet(tweet.text),
                     'location': tweet.user.location,
                     'place': tweet.place,
-                    'coordinates': tweet.coordinates,
+                    'tweet_lon': tweet_lon,
+                    'tweet_lat': tweet_lat,
                     'followers_count': tweet.user.followers_count,
                     'verified': tweet.user.verified,
                     'created_at': tweet.created_at,
