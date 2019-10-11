@@ -46,6 +46,7 @@ def main():
 
     print('\nDataset salvo com Sucesso!')
 
+
 def askAndReturnSearchTerm():
     """
     inserir termo para busca inclusive com operadores avançados de pesquisa do twitter (OR, AND, -, #, FROM, TO, @, SINCE, UNTIL)
