@@ -1,7 +1,6 @@
 # -*- Coding: UTF-8 -*-
 #coding: utf-8
 
-import json
 import sys
 import re
 import tweepy

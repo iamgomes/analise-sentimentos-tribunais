@@ -45,7 +45,6 @@ def main():
     dataSet.to_csv('dataSet.csv', sep=';')
 
     print('\nDataset salvo com Sucesso!')
-    
 
 def askAndReturnSearchTerm():
     """
