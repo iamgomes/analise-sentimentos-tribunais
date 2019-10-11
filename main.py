@@ -6,23 +6,32 @@ def main():
     content = {}
 
     content['searchTerm'] = askAndReturnSearchTerm()
-
     contentTweets = robot.downloadTweets(content['searchTerm'])
+
+    content['tweet'] = []
+
+    for i in contentTweets:
+
+        print('Aplicando análise de sentimentos com o Watson...,')
+        
+        data = {
+            'user_id': i['user_id'],
+            'user': i['user'],
+            'TextOriginal': i['text'],
+            'TextSanitized': i['text_sanitized'],
+            'location': i['location'],
+            'place': i['place'],
+            'coordinates': i['coordinates'],
+            'followers_count': i['followers_count'],
+            'verified': i['verified'],
+            'created_at': i['created_at'],
+            'sentiment': sentimentWatson(i['text_sanitized']),
+            'keywords': keywordsWatson(i['text_sanitized'])
+        }
+
+        content['tweet'].append(data)
     
-    content['user_id'] = contentTweets[0]['user_id']
-    content['user'] = contentTweets[0]['user']
-    content['TextOriginal'] = contentTweets[0]['text']
-    content['TextSanitized'] = contentTweets[0]['text_sanitized']
-    content['location'] = contentTweets[0]['location']
-    content['place'] = contentTweets[0]['place']
-    content['followers_count'] = contentTweets[0]['followers_count']
-    content['verified'] = contentTweets[0]['verified']
-    content['created_at'] = contentTweets[0]['created_at']
-    content['sentiment'] = sentimentWatson(contentTweets[0]['text'])
-    content['keywords'] = keywordsWatson(contentTweets[0]['text'])
-
     print(content)
-
 
 def askAndReturnSearchTerm():
     """

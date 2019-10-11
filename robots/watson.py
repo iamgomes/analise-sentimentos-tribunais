@@ -1,9 +1,8 @@
-# -*- coding: utf8 -*-
 import json
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions, KeywordsOptions
-from decouple import config
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from decouple import config
 
 def sentimentWatson(content):
 
@@ -42,4 +41,8 @@ def keywordsWatson(content):
     doc_ini = json.dumps(response)
     doc_fim = json.loads(doc_ini)
 
-    return doc_fim['keywords']
+    keywords = []
+    
+    [keywords.append(i['text'].lower()) for i in doc_fim['keywords'][0:]]
+
+    return keywords
