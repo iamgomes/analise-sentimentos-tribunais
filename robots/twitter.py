@@ -5,11 +5,6 @@ import tweepy
 from decouple import config
 
 
-def robotTwitter(content):
-    return downloadTweets(content)
-    #return contentFromTwitter(content)
-    
-
 def downloadTweets(content):
     consumer_key=config('consumer_key')
     consumer_secret=config('consumer_secret')
@@ -23,8 +18,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 1 # Algum número grande e arbitrário
-    tweetsPerQry = 1  # este é o máximo que a API permite 100
+    maxTweets = 20 # Algum número grande e arbitrário
+    tweetsPerQry = 20  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -35,7 +30,7 @@ def downloadTweets(content):
     max_id = -1
 
     tweetCount = 0
-    print('Baixando o máximo de {} tweets com o termo {}'.format(maxTweets, content.upper()))
+    print('Baixando os tweets com o termo {}'.format(content.upper()))
 
     tweets_list = []
 
@@ -66,11 +61,13 @@ def downloadTweets(content):
                     'user_id': tweet.user.id,
                     'user': tweet.user.screen_name,
                     'text': tweet.text,
+                    'text_sanitized': clean_tweet(tweet.text),
                     'location': tweet.user.location,
                     'place': tweet.place,
+                    'coordinates': tweet.coordinates,
                     'followers_count': tweet.user.followers_count,
                     'verified': tweet.user.verified,
-                    'created_at': tweet.created_at
+                    'created_at': tweet.created_at,
                 }
 
                 tweets_list.append(data)
@@ -87,39 +84,37 @@ def downloadTweets(content):
 
     return tweets_list
 
-"""
-    for page in tweepy.Cursor(api.search, q=content, lang='pt', Tweet_mode='extended', result_type ='recent', count=100).pages(5):
-
-        print('Buscando tweets com o termo {}...'.format(content.upper()))
-        
-        data = {
-            'text': page[0]._json['text'],
-            'user': page[0]._json['user']['screen_name'],
-            'location': page[0]._json['user']['location'],
-            'place': page[0]._json['place'],
-            'followers_count': page[0]._json['user']['followers_count'],
-            'verified': page[0]._json['user']['verified'],
-            'created_at': page[0]._json['created_at']
-        }
-
-        tweets.append(data)
-    
-    search = api.search(q=content, lang='pt', count=100)
-
-    for t in search:
-        data = {
-            'text': t.text,
-            'user': t.user.screen_name,
-            'location': t.user.location,
-            'place': t.place,
-            'followers_count': t.user.followers_count,
-            'verified': t.user.verified,
-            'created_at': t.created_at
-        }
-
-        tweets.append(data)
-"""
 
 def clean_tweet(tweet):
     
-    return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t \n])|      (\w+:\/\/\S+)", " ", tweet).split())
+    return removeBlankLine(removeRTArrobaLink(removeEmoji(tweet)))
+
+def removeBlankLine(text):
+    allLines = text.split('\n')
+    withoutBlankLine = list(filter(lambda line: len(line.strip()) != 0, allLines))
+
+    return ' '.join(withoutBlankLine)
+
+def removeRTArrobaLink(text):
+    withoutArroba = re.sub(r'@\S+', '', text)
+    withoutLink = re.sub(r'http\S+', '', withoutArroba)
+
+    return withoutLink.replace('RT','')\
+                                        .replace('.','')\
+                                        .replace(',','')\
+                                        .replace('-','')\
+                                        .replace('  ',' ')\
+                                        .replace('🤣','')\
+                                        .strip()
+
+def removeEmoji(text):
+    emoji_pattern = re.compile('['
+                            u'\U0001F600-\U0001F64F'  # emoticons
+                            u'\U0001F300-\U0001F5FF'  # symbols & pictographs
+                            u'\U0001F680-\U0001F6FF'  # transport & map symbols
+                            u'\U0001F1E0-\U0001F1FF'  # flags (iOS)
+                            u'\U00002702-\U000027B0'
+                            u'\U000024C2-\U0001F251'
+                            ']+', flags=re.UNICODE)
+
+    return emoji_pattern.sub(r'', text)

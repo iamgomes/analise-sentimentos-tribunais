@@ -1,17 +1,37 @@
 import robots.twitter as robot
-from robots.watson import sentimentWatson
+from robots.watson import sentimentWatson, keywordsWatson
 
 def main():
     # cria dicionário de dados e sua estrutura
     content = {}
 
     content['searchTerm'] = askAndReturnSearchTerm()
-    robot.downloadTweets(content['searchTerm'])
-    content['tweetContentOriginal'] = robot.robotTwitter(content['searchTerm'])
-    content['sentiment'] = sentimentWatson(content['tweetContentOriginal'][0]['text'])
+    contentTweets = robot.downloadTweets(content['searchTerm'])
 
+    content['tweet'] = []
+
+    for i in contentTweets:
+
+        print('Aplicando análise de sentimentos com o Watson...,')
+        
+        data = {
+            'user_id': i['user_id'],
+            'user': i['user'],
+            'TextOriginal': i['text'],
+            'TextSanitized': i['text_sanitized'],
+            'location': i['location'],
+            'place': i['place'],
+            'coordinates': i['coordinates'],
+            'followers_count': i['followers_count'],
+            'verified': i['verified'],
+            'created_at': i['created_at'],
+            'sentiment': sentimentWatson(i['text_sanitized']),
+            'keywords': keywordsWatson(i['text_sanitized'])
+        }
+
+        content['tweet'].append(data)
+    
     print(content)
-
 
 def askAndReturnSearchTerm():
     """
