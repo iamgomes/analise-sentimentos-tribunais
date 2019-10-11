@@ -3,7 +3,10 @@ import sys
 import re
 import tweepy
 from decouple import config
+<<<<<<< HEAD
 import pandas as pd
+=======
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 
 
 consumer_key=config('consumer_key')
@@ -20,8 +23,13 @@ if (not api):
 content = 'neymar'
 
 searchQuery = content  # é isso que estamos procurando
+<<<<<<< HEAD
 maxTweets = 2 # Algum número grande e arbitrário
 tweetsPerQry = 2  # este é o máximo que a API permite 100
+=======
+maxTweets = 1 # Algum número grande e arbitrário
+tweetsPerQry = 1  # este é o máximo que a API permite 100
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 
 # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
 # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -57,9 +65,27 @@ while tweetCount < maxTweets:
             print('Não foram encontrados mais tweets')
             break
 
+<<<<<<< HEAD
         for tweet in new_tweets:  
 
             tweets_list.append(tweet._json['text'])
+=======
+        for tweet in new_tweets:
+
+            tweet_lat = 0.0
+            tweet_lon = 0.0
+
+            if tweet._json['coordinates']:    
+                geo = tweet['coordinates']
+                if not geo is None:
+                    latlon = geo['coordinates']
+                    tweet_lon = latlon[0]
+                    tweet_lat = latlon[1]
+
+
+
+            print(tweet)
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
             
         tweetCount += len(new_tweets)
         print('Já baixou {} tweets'.format(tweetCount))
@@ -70,6 +96,7 @@ while tweetCount < maxTweets:
         break
 
 print('Baixados {} tweets!'.format(tweetCount))
+<<<<<<< HEAD
 
 dataSet = pd.DataFrame()
 
@@ -87,3 +114,5 @@ dataSet.to_csv('dataSet-teste.csv', sep=';')
 
 print(tweets_list)
 
+=======
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b

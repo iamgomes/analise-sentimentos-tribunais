@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 # -*- Coding: UTF-8 -*-
 #coding: utf-8
 
+=======
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 import json
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions, KeywordsOptions

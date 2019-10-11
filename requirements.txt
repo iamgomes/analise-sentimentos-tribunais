@@ -1,4 +1,8 @@
 tweepy==3.8.0
 python-decouple==3.1
+<<<<<<< HEAD
 ibm-watson==4.0.1
 pandas==0.24.2
+=======
+ibm-watson==4.0.1
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b

@@ -6,7 +6,10 @@ import sys
 import re
 import tweepy
 from decouple import config
+<<<<<<< HEAD
 from unicodedata import normalize
+=======
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 
 
 def downloadTweets(content):
@@ -22,8 +25,13 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
+<<<<<<< HEAD
     maxTweets = 3 # Algum número grande e arbitrário
     tweetsPerQry = 3  # este é o máximo que a API permite 100
+=======
+    maxTweets = 5 # Algum número grande e arbitrário
+    tweetsPerQry = 5  # este é o máximo que a API permite 100
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -44,6 +52,7 @@ def downloadTweets(content):
                 if (not sinceId):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, 
                                             Tweet_mode='extended', lang='pt')
+<<<<<<< HEAD
                 else:
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, Tweet_mode='extended',
                                             since_id=sinceId, lang='pt')
@@ -52,6 +61,16 @@ def downloadTweets(content):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
                                             Tweet_mode='extended', max_id=str(max_id - 1))
                 else:
+=======
+                else:
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, Tweet_mode='extended',
+                                            since_id=sinceId, lang='pt')
+            else:
+                if (not sinceId):
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
+                                            Tweet_mode='extended', max_id=str(max_id - 1))
+                else:
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
                                             Tweet_mode='extended', max_id=str(max_id - 1),
                                             since_id=sinceId)
@@ -61,6 +80,7 @@ def downloadTweets(content):
 
             for tweet in new_tweets:
 
+<<<<<<< HEAD
                 data = {
                     'user_id': tweet.user.id_str,
                     'user': tweet.user.screen_name,
@@ -74,6 +94,32 @@ def downloadTweets(content):
                     'created_at': tweet.created_at,
                 }
 
+=======
+                tweet_lat = 0.0
+                tweet_lon = 0.0
+
+                if tweet._json['coordinates']:    
+                    geo = tweet['coordinates']
+                    if not geo is None:
+                        latlon = geo['coordinates']
+                        tweet_lon = latlon[0]
+                        tweet_lat = latlon[1]
+
+                data = {
+                    'user_id': tweet.user.id,
+                    'user': tweet.user.screen_name,
+                    'text': tweet.text,
+                    'text_sanitized': clean_tweet(tweet.text),
+                    'location': tweet.user.location,
+                    'place': tweet.place,
+                    'tweet_lon': tweet_lon,
+                    'tweet_lat': tweet_lat,
+                    'followers_count': tweet.user.followers_count,
+                    'verified': tweet.user.verified,
+                    'created_at': tweet.created_at,
+                }
+
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
                 tweets_list.append(data)
 
             tweetCount += len(new_tweets)
@@ -91,7 +137,11 @@ def downloadTweets(content):
 
 def clean_tweet(tweet):
     
+<<<<<<< HEAD
     return removeBlankLine(removeRTArrobaLink(removeEmoji(removeAcentos(tweet))))
+=======
+    return removeBlankLine(removeRTArrobaLink(removeEmoji(tweet)))
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
 
 def removeBlankLine(text):
     allLines = text.split('\n')
@@ -121,9 +171,13 @@ def removeEmoji(text):
                             u'\U000024C2-\U0001F251'
                             ']+', flags=re.UNICODE)
 
+<<<<<<< HEAD
     return emoji_pattern.sub(r'', text)
 
 
 def removeAcentos(text):
     
     return normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+=======
+    return emoji_pattern.sub(r'', text)
+>>>>>>> 36d599ae7b7f83083f44dffdb1d9614d542f3b9b
