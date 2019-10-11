@@ -1,15 +1,13 @@
+# -*- Coding: UTF-8 -*-
+#coding: utf-8
+
 import json
 import sys
 import re
 import tweepy
-import asyncio
 from decouple import config
-import jsonpickle
+from unicodedata import normalize
 
-def robotTwitter(content):
-    return downloadTweets(content)
-    #return contentFromTwitter(content)
-    
 
 def downloadTweets(content):
     consumer_key=config('consumer_key')
@@ -24,9 +22,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 100 # Algum número grande e arbitrário
-    tweetsPerQry = 100  # este é o máximo que a API permite
-    fName = 'tweets.json' # Armazenaremos os tweets em um arquivo de texto.
+    maxTweets = 3 # Algum número grande e arbitrário
+    tweetsPerQry = 3  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -37,71 +34,96 @@ def downloadTweets(content):
     max_id = -1
 
     tweetCount = 0
-    print('Baixando o máximo de {} tweets com o termo {}'.format(maxTweets, content.upper()))
-    with open(fName, 'w') as f:
-        while tweetCount < maxTweets:
-            try:
-                if (max_id <= 0):
-                    if (not sinceId):
-                        new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt')
-                    else:
-                        new_tweets = api.search(q=searchQuery, count=tweetsPerQry,
-                                                since_id=sinceId, lang='pt')
+    print('Baixando os tweets com o termo {}'.format(content.upper()))
+
+    tweets_list = []
+
+    while tweetCount < maxTweets:
+        try:
+            if (max_id <= 0):
+                if (not sinceId):
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, 
+                                            Tweet_mode='extended', lang='pt')
                 else:
-                    if (not sinceId):
-                        new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                                max_id=str(max_id - 1))
-                    else:
-                        new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                                max_id=str(max_id - 1),
-                                                since_id=sinceId)
-                if not new_tweets:
-                    print('Não foram encontrados mais tweets')
-                    break
-                for tweet in new_tweets:
-                    f.write(jsonpickle.encode(tweet._json, unpicklable=False) + '\n')
-                tweetCount += len(new_tweets)
-                print('Já baixou {} tweets'.format(tweetCount))
-                max_id = new_tweets[-1].id
-            except tweepy.TweepError as e:
-                print('Algum erro em: ' + str(e))
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, Tweet_mode='extended',
+                                            since_id=sinceId, lang='pt')
+            else:
+                if (not sinceId):
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
+                                            Tweet_mode='extended', max_id=str(max_id - 1))
+                else:
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
+                                            Tweet_mode='extended', max_id=str(max_id - 1),
+                                            since_id=sinceId)
+            if not new_tweets:
+                print('Não foram encontrados mais tweets')
                 break
 
-    print('Baixados {} tweets, salvos em {}'.format(tweetCount, fName))
+            for tweet in new_tweets:
 
-"""
-    for page in tweepy.Cursor(api.search, q=content, lang='pt', Tweet_mode='extended', result_type ='recent', count=100).pages(5):
+                data = {
+                    'user_id': tweet.user.id_str,
+                    'user': tweet.user.screen_name,
+                    'text': tweet.text,
+                    'text_sanitized': clean_tweet(tweet.text),
+                    'location': tweet.user.location,
+                    'place': tweet.place,
+                    'coordinates': tweet.coordinates,
+                    'followers_count': tweet.user.followers_count,
+                    'verified': tweet.user.verified,
+                    'created_at': tweet.created_at,
+                }
 
-        print('Buscando tweets com o termo {}...'.format(content.upper()))
-        
-        data = {
-            'text': page[0]._json['text'],
-            'user': page[0]._json['user']['screen_name'],
-            'location': page[0]._json['user']['location'],
-            'place': page[0]._json['place'],
-            'followers_count': page[0]._json['user']['followers_count'],
-            'verified': page[0]._json['user']['verified'],
-            'created_at': page[0]._json['created_at']
-        }
+                tweets_list.append(data)
 
-        tweets.append(data)
-    
-    search = api.search(q=content, lang='pt', count=100)
+            tweetCount += len(new_tweets)
+            print('Já baixou {} tweets'.format(tweetCount))
+            max_id = new_tweets[-1].id
 
-    for t in search:
-        data = {
-            'text': t.text,
-            'user': t.user.screen_name,
-            'location': t.user.location,
-            'place': t.place,
-            'followers_count': t.user.followers_count,
-            'verified': t.user.verified,
-            'created_at': t.created_at
-        }
+        except tweepy.TweepError as e:
+            print('Algum erro em: ' + str(e))
+            break
 
-        tweets.append(data)
-"""
+    print('Baixados {} tweets!'.format(tweetCount))
+
+    return tweets_list
+
 
 def clean_tweet(tweet):
     
-    return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|      (\w+:\/\/\S+)", " ", tweet).split())
+    return removeBlankLine(removeRTArrobaLink(removeEmoji(removeAcentos(tweet))))
+
+def removeBlankLine(text):
+    allLines = text.split('\n')
+    withoutBlankLine = list(filter(lambda line: len(line.strip()) != 0, allLines))
+
+    return ' '.join(withoutBlankLine)
+
+def removeRTArrobaLink(text):
+    withoutArroba = re.sub(r'@\S+', '', text)
+    withoutLink = re.sub(r'http\S+', '', withoutArroba)
+
+    return withoutLink.replace('RT','')\
+                                        .replace('.','')\
+                                        .replace(',','')\
+                                        .replace('-','')\
+                                        .replace('  ',' ')\
+                                        .replace('🤣','')\
+                                        .strip()
+
+def removeEmoji(text):
+    emoji_pattern = re.compile('['
+                            u'\U0001F600-\U0001F64F'  # emoticons
+                            u'\U0001F300-\U0001F5FF'  # symbols & pictographs
+                            u'\U0001F680-\U0001F6FF'  # transport & map symbols
+                            u'\U0001F1E0-\U0001F1FF'  # flags (iOS)
+                            u'\U00002702-\U000027B0'
+                            u'\U000024C2-\U0001F251'
+                            ']+', flags=re.UNICODE)
+
+    return emoji_pattern.sub(r'', text)
+
+
+def removeAcentos(text):
+    
+    return normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
