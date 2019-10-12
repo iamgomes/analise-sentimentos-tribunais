@@ -27,16 +27,18 @@ def main():
     dataSet['coordinates'] = [tweet['coordinates'] for tweet in contentTweets]
     dataSet['location'] = [tweet['location'] for tweet in contentTweets]
     dataSet['place'] = [tweet['place'] for tweet in contentTweets]
+
+    print('\nBuscando latitude e longitude...')
     dataSet['lat'] = [geo.coordinates(tweet['location'])['lat'] for tweet in contentTweets]
     dataSet['lng'] = [geo.coordinates(tweet['location'])['lng'] for tweet in contentTweets]
 
     print('\nAplicando Watson...')
     print('--SCORE--')
-    #dataSet['score'] = [sentimentWatson(tweet['text_sanitized'])['score'] for tweet in contentTweets]
+    dataSet['score'] = [sentimentWatson(tweet['text_sanitized'])['score'] for tweet in contentTweets]
     print('--SENTIMENTOS--')
-    #dataSet['sentiment'] = [sentimentWatson(tweet['text_sanitized'])['label'] for tweet in contentTweets]
+    dataSet['sentiment'] = [sentimentWatson(tweet['text_sanitized'])['label'] for tweet in contentTweets]
     print('--KEYWORDS--')
-    #dataSet['keywords'] = [keywordsWatson(tweet['text_sanitized']) for tweet in contentTweets]
+    dataSet['keywords'] = [keywordsWatson(tweet['text_sanitized']) for tweet in contentTweets]
 
     print('\nExportando Dataset em CSV...')
     dataSet.to_csv('dataSet.csv', sep=';')

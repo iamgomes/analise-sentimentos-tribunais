@@ -42,17 +42,17 @@ def downloadTweets(content):
             if (max_id <= 0):
                 if (not sinceId):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, 
-                                            Tweet_mode='extended', lang='pt')
+                                            tweet_mode='extended', lang='pt')
                 else:
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, Tweet_mode='extended',
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, tweet_mode='extended',
                                             since_id=sinceId, lang='pt')
             else:
                 if (not sinceId):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                            Tweet_mode='extended', max_id=str(max_id - 1))
+                                            tweet_mode='extended', max_id=str(max_id - 1))
                 else:
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                            Tweet_mode='extended', max_id=str(max_id - 1),
+                                            tweet_mode='extended', max_id=str(max_id - 1),
                                             since_id=sinceId)
             if not new_tweets:
                 print('Não foram encontrados mais tweets')
@@ -63,8 +63,8 @@ def downloadTweets(content):
                 data = {
                     'user_id': tweet.user.id_str,
                     'user': tweet.user.screen_name,
-                    'text': tweet.text,
-                    'text_sanitized': clean_tweet(tweet.text),
+                    'text': tweet.full_text,
+                    'text_sanitized': clean_tweet(tweet.full_text),
                     'location': removeAcentos(tweet.user.location),
                     'place': tweet.place,
                     'coordinates': tweet.coordinates,
