@@ -21,8 +21,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 5 # Algum número grande e arbitrário
-    tweetsPerQry = 5  # este é o máximo que a API permite 100
+    maxTweets = 10 # Algum número grande e arbitrário
+    tweetsPerQry = 10  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir

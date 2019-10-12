@@ -2,3 +2,4 @@ tweepy==3.8.0
 python-decouple==3.1
 ibm-watson==4.0.1
 pandas==0.24.2
+requests==2.22.0
