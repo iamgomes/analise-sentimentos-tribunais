@@ -21,8 +21,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 5 # Algum número grande e arbitrário
-    tweetsPerQry = 5  # este é o máximo que a API permite 100
+    maxTweets = 10 # Algum número grande e arbitrário
+    tweetsPerQry = 10  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -42,17 +42,17 @@ def downloadTweets(content):
             if (max_id <= 0):
                 if (not sinceId):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, 
-                                            Tweet_mode='extended', lang='pt')
+                                            tweet_mode='extended', lang='pt')
                 else:
-                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, Tweet_mode='extended',
+                    new_tweets = api.search(q=searchQuery, count=tweetsPerQry, tweet_mode='extended',
                                             since_id=sinceId, lang='pt')
             else:
                 if (not sinceId):
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                            Tweet_mode='extended', max_id=str(max_id - 1))
+                                            tweet_mode='extended', max_id=str(max_id - 1))
                 else:
                     new_tweets = api.search(q=searchQuery, count=tweetsPerQry, lang='pt',
-                                            Tweet_mode='extended', max_id=str(max_id - 1),
+                                            tweet_mode='extended', max_id=str(max_id - 1),
                                             since_id=sinceId)
             if not new_tweets:
                 print('Não foram encontrados mais tweets')
@@ -63,8 +63,8 @@ def downloadTweets(content):
                 data = {
                     'user_id': tweet.user.id_str,
                     'user': tweet.user.screen_name,
-                    'text': tweet.text,
-                    'text_sanitized': clean_tweet(tweet.text),
+                    'text': tweet.full_text,
+                    'text_sanitized': clean_tweet(tweet.full_text),
                     'location': removeAcentos(tweet.user.location),
                     'place': tweet.place,
                     'coordinates': tweet.coordinates,

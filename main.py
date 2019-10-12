@@ -2,6 +2,7 @@
 #coding: utf-8
 
 import robots.twitter as robot
+import robots.geocode as geo
 from robots.watson import sentimentWatson, keywordsWatson
 import pandas as pd
 
@@ -20,19 +21,17 @@ def main():
     dataSet['user'] = [tweet['user'] for tweet in contentTweets]
     dataSet['text'] = [tweet['text'] for tweet in contentTweets]
     dataSet['text_sanitized'] = [tweet['text_sanitized'] for tweet in contentTweets]
-    dataSet['location'] = [tweet['location'] for tweet in contentTweets]
-    dataSet['coordinates'] = [tweet['coordinates'] for tweet in contentTweets]
     dataSet['followers_count'] = [tweet['followers_count'] for tweet in contentTweets]
     dataSet['verified'] = [tweet['verified'] for tweet in contentTweets]
     dataSet['created_at'] = [tweet['created_at'] for tweet in contentTweets]
-    tweets_place = []
-    for tweet in contentTweets:
-        if tweet['place']:
-            tweets_place.append(tweet['place']['full_name'])
-        else:
-            tweets_place.append('null')
-    dataSet['place'] = [i for i in tweets_place]
-    
+    dataSet['coordinates'] = [tweet['coordinates'] for tweet in contentTweets]
+    dataSet['location'] = [tweet['location'] for tweet in contentTweets]
+    dataSet['place'] = [tweet['place'] for tweet in contentTweets]
+
+    print('\nBuscando latitude e longitude...')
+    dataSet['lat'] = [geo.coordinates(tweet['location'])['lat'] for tweet in contentTweets]
+    dataSet['lng'] = [geo.coordinates(tweet['location'])['lng'] for tweet in contentTweets]
+
     print('\nAplicando Watson...')
     print('--SCORE--')
     dataSet['score'] = [sentimentWatson(tweet['text_sanitized'])['score'] for tweet in contentTweets]
@@ -45,6 +44,7 @@ def main():
     dataSet.to_csv('dataSet.csv', sep=';')
 
     print('\nDataset salvo com Sucesso!')
+
 
 def askAndReturnSearchTerm():
     """
