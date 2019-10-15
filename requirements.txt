@@ -2,4 +2,5 @@ tweepy==3.8.0
 python-decouple==3.1
 ibm-watson==4.0.1
 pandas==0.24.2
-requests==2.22.0
+numpy==1.16.4
+googlemaps==3.0.2

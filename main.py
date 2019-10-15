@@ -3,8 +3,9 @@
 
 import robots.twitter as robot
 import robots.geocode as geo
-from robots.watson import sentimentWatson, keywordsWatson
+from robots.watson import sentimentKeywordsWatson
 import pandas as pd
+import numpy as np
 
 def main():
     # cria dicionário de dados e sua estrutura
@@ -17,31 +18,27 @@ def main():
     dataSet = pd.DataFrame()
     
     print('\nCarregando tweets no Dataset...')
-    dataSet['user_id'] = [tweet['user_id'] for tweet in contentTweets]
-    dataSet['user'] = [tweet['user'] for tweet in contentTweets]
-    dataSet['text'] = [tweet['text'] for tweet in contentTweets]
-    dataSet['text_sanitized'] = [tweet['text_sanitized'] for tweet in contentTweets]
-    dataSet['followers_count'] = [tweet['followers_count'] for tweet in contentTweets]
-    dataSet['verified'] = [tweet['verified'] for tweet in contentTweets]
-    dataSet['created_at'] = [tweet['created_at'] for tweet in contentTweets]
-    dataSet['coordinates'] = [tweet['coordinates'] for tweet in contentTweets]
-    dataSet['location'] = [tweet['location'] for tweet in contentTweets]
-    dataSet['place'] = [tweet['place'] for tweet in contentTweets]
+    dataSet['user_id'] = np.array([tweet['user_id'] for tweet in contentTweets])
+    dataSet['user'] = np.array([tweet['user'] for tweet in contentTweets])
+    dataSet['text'] = np.array([tweet['text'] for tweet in contentTweets])
+    dataSet['text_sanitized'] = np.array([tweet['text_sanitized'] for tweet in contentTweets])
+    dataSet['followers_count'] = np.array([tweet['followers_count'] for tweet in contentTweets])
+    dataSet['verified'] = np.array([tweet['verified'] for tweet in contentTweets])
+    dataSet['created_at'] = np.array([tweet['created_at'] for tweet in contentTweets])
+    dataSet['coordinates'] = np.array([tweet['coordinates'] for tweet in contentTweets])
+    dataSet['location'] = np.array([tweet['location'] for tweet in contentTweets])
+    dataSet['place'] = np.array([tweet['place'] for tweet in contentTweets])
+    dataSet['source'] = np.array([tweet['source'] for tweet in contentTweets])
+
+    dataSet.to_csv('tweets.csv', sep=';')
 
     print('\nBuscando latitude e longitude...')
-    dataSet['lat'] = [geo.coordinates(tweet['location'])['lat'] for tweet in contentTweets]
-    dataSet['lng'] = [geo.coordinates(tweet['location'])['lng'] for tweet in contentTweets]
+    geo.coordinates('tweets.csv')
 
     print('\nAplicando Watson...')
-    print('--SCORE--')
-    dataSet['score'] = [sentimentWatson(tweet['text_sanitized'])['score'] for tweet in contentTweets]
-    print('--SENTIMENTOS--')
-    dataSet['sentiment'] = [sentimentWatson(tweet['text_sanitized'])['label'] for tweet in contentTweets]
-    print('--KEYWORDS--')
-    dataSet['keywords'] = [keywordsWatson(tweet['text_sanitized']) for tweet in contentTweets]
+    sentimentKeywordsWatson('tweets_kml.csv.csv')
 
     print('\nExportando Dataset em CSV...')
-    dataSet.to_csv('dataSet.csv', sep=';')
 
     print('\nDataset salvo com Sucesso!')
 
