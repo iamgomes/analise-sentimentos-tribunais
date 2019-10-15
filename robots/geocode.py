@@ -1,35 +1,31 @@
 # -*- Coding: UTF-8 -*-
 #coding: utf-8
 
-import requests
+import googlemaps
 from decouple import config
+import pandas as pd
 
+def coordinates(file):
 
-def coordinates(address, api_key=config('api_key')):
-    
-    url = config('url_google')
+    df = pd.read_csv(file, sep=';')
+    df['lat'] = None
+    df['lng'] = None
 
-    params = {
-        'address' : address.encode('ascii', 'xmlcharrefreplace'),
-        'sensor' : 'false'
-    }
+    gmaps_key = googlemaps.Client(key=config('api_key'))
 
-    if api_key:
-        params['key'] = api_key
+    for i in range(len(df)):
+        print('Buscando latitude e longitude de {}'.format(i))
+        geocode_result = gmaps_key.geocode(df.loc[i,'location'])
+        try:
+            lat = geocode_result[0]['geometry']['location']['lat']
+            lng = geocode_result[0]['geometry']['location']['lng']
+            df.loc['lat'] = lat
+            df.loc['lng'] = lng
+        except:
+            lat = None
+            lng = None
 
-    response = requests.get(url, params=params)
-    coord = response.json()
+    file_name = 'tweets_kml.cvs'
+    df.to_csv(file_name, sep=';', index=None)
 
-    if coord['status'] == 'OVER_QUERY_LIMIT':
-        raise RuntimeError(coord['error_message'])
-
-    if coord['status'] == 'OK':
-        return {
-            'lat': coord['results'][0]['geometry']['location']['lat'],
-            'lng': coord['results'][0]['geometry']['location']['lng'],
-        }
-    else:
-        return {
-            'lat': '',
-            'lng': '',
-            }
+    print('Arquivo {} gerado com sucesso!'.format(file_name))

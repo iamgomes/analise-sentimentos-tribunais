@@ -21,8 +21,8 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 10 # Algum número grande e arbitrário
-    tweetsPerQry = 10  # este é o máximo que a API permite 100
+    maxTweets = 3600 # Algum número grande e arbitrário
+    tweetsPerQry = 100  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
     # else padrão para nenhum limite inferior, volte o quanto a API permitir
@@ -71,6 +71,7 @@ def downloadTweets(content):
                     'followers_count': tweet.user.followers_count,
                     'verified': tweet.user.verified,
                     'created_at': tweet.created_at,
+                    'source': tweet.source
                 }
 
                 tweets_list.append(data)
