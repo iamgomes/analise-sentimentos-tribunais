@@ -4,6 +4,7 @@
 import robots.twitter as robot
 import robots.geocode as geo
 from robots.watson import sentimentKeywordsWatson
+import robots.word_cloud as wc
 import pandas as pd
 import numpy as np
 
@@ -42,6 +43,9 @@ def main():
 
     print('\nDataset salvo com Sucesso!')
 
+    print('\nGerando nuvem de palavras...')
+    wc.make_wordcloud('dataSet_final.csv')
+    
 
 def askAndReturnSearchTerm():
     """
