@@ -16,7 +16,7 @@ def main():
 
     print('\nGerando Dataset...')
     dataSet = pd.DataFrame()
-    
+   
     print('\nCarregando tweets no Dataset...')
     dataSet['user_id'] = np.array([tweet['user_id'] for tweet in contentTweets])
     dataSet['user'] = np.array([tweet['user'] for tweet in contentTweets])
@@ -36,7 +36,7 @@ def main():
     geo.coordinates('tweets.csv')
 
     print('\nAplicando Watson...')
-    sentimentKeywordsWatson('tweets_kml.csv.csv')
+    sentimentKeywordsWatson('tweets_kml.csv')
 
     print('\nExportando Dataset em CSV...')
 
