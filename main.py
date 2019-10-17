@@ -13,7 +13,8 @@ def main():
     content = {}
 
     content['searchTerm'] = askAndReturnSearchTerm()
-    contentTweets = robot.downloadTweets(content['searchTerm'])
+    content['number_tweets'] = askNumberTweets()
+    contentTweets = robot.downloadTweets(content['searchTerm'], content['number_tweets'])
 
     print('\nGerando Dataset...')
     dataSet = pd.DataFrame()
@@ -51,7 +52,14 @@ def askAndReturnSearchTerm():
     """
     inserir termo para busca inclusive com operadores avançados de pesquisa do twitter (OR, AND, -, #, FROM, TO, @, SINCE, UNTIL)
     """
-    return input('Digite o termo a ser pesquisado no Twitter: ') 
+    return input('Digite o termo a ser pesquisado no Twitter: ')
+
+
+def askNumberTweets():
+    """
+    inserir o número máximo de tweets a serem retornados
+    """
+    return input('Digite o número máximo de tweets a serem retornados do Twitter: ') 
 
 
 if __name__ == "__main__":
