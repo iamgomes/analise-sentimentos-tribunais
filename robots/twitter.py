@@ -8,7 +8,7 @@ from decouple import config
 from unicodedata import normalize
 
 
-def downloadTweets(content):
+def downloadTweets(content, number_tweets):
     consumer_key=config('consumer_key')
     consumer_secret=config('consumer_secret')
 
@@ -21,7 +21,7 @@ def downloadTweets(content):
         sys.exit(-1)
 
     searchQuery = content  # é isso que estamos procurando
-    maxTweets = 3600 # Algum número grande e arbitrário
+    maxTweets = number_tweets # Algum número grande e arbitrário
     tweetsPerQry = 100  # este é o máximo que a API permite 100
 
     # Se os resultados de um ID específico em diante forem solicitados, defina since_id para esse ID.
